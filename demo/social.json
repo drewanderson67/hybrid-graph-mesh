@@ -1,0 +1,25 @@
+{
+  "nodes": [
+    {"id": "p1", "labels": ["Person"], "properties": {"name": "Alice", "age": 34}},
+    {"id": "p2", "labels": ["Person"], "properties": {"name": "Bob", "age": 28}},
+    {"id": "p3", "labels": ["Person"], "properties": {"name": "Carol", "age": 45}},
+    {"id": "p4", "labels": ["Person"], "properties": {"name": "Dave", "age": 39}},
+    {"id": "p5", "labels": ["Person"], "properties": {"name": "Erin", "age": 31}},
+    {"id": "s1", "labels": ["Skill"], "properties": {"name": "Python"}},
+    {"id": "s2", "labels": ["Skill"], "properties": {"name": "SPARQL"}},
+    {"id": "s3", "labels": ["Skill"], "properties": {"name": "Cypher"}}
+  ],
+  "edges": [
+    {"src": "p1", "dst": "p2", "type": "KNOWS", "properties": {"since": 2015}},
+    {"src": "p1", "dst": "p3", "type": "KNOWS", "properties": {"since": 2018}},
+    {"src": "p2", "dst": "p4", "type": "KNOWS", "properties": {"since": 2020}},
+    {"src": "p3", "dst": "p5", "type": "KNOWS", "properties": {"since": 2021}},
+    {"src": "p1", "dst": "p5", "type": "KNOWS", "properties": {"since": 2022}},
+    {"src": "p1", "dst": "s1", "type": "HAS_SKILL"},
+    {"src": "p1", "dst": "s2", "type": "HAS_SKILL"},
+    {"src": "p2", "dst": "s3", "type": "HAS_SKILL"},
+    {"src": "p3", "dst": "s1", "type": "HAS_SKILL"},
+    {"src": "p5", "dst": "s2", "type": "HAS_SKILL"},
+    {"src": "p5", "dst": "s3", "type": "HAS_SKILL"}
+  ]
+}

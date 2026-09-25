@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Hybrid Graph Mesh</title>
+<style>
+  :root { --bg:#0f172a; --panel:#1e293b; --text:#e2e8f0; --muted:#94a3b8; --accent:#38bdf8; --rdf:#a78bfa; --lpg:#34d399; }
+  body { margin:0; font:15px/1.5 system-ui, sans-serif; background:var(--bg); color:var(--text); }
+  main { max-width:1100px; margin:0 auto; padding:2rem 1.5rem; }
+  h1 { font-size:1.4rem; margin:0 0 .25rem; } h1 span { color:var(--muted); font-weight:normal; font-size:.9rem; margin-left:.5rem; }
+  form { display:flex; gap:.5rem; margin:1.25rem 0; }
+  input { flex:1; padding:.7rem .9rem; border-radius:8px; border:1px solid #334155; background:var(--panel); color:var(--text); font-size:1rem; }
+  button { padding:.7rem 1.1rem; border-radius:8px; border:0; background:var(--accent); color:#082f49; font-weight:600; cursor:pointer; }
+  .chips { display:flex; flex-wrap:wrap; gap:.4rem; margin-bottom:1rem; }
+  .chips button { background:var(--panel); color:var(--muted); font-weight:normal; padding:.3rem .7rem; font-size:.85rem; border:1px solid #334155; }
+  section { background:var(--panel); border-radius:10px; padding:1rem 1.2rem; margin-bottom:1rem; }
+  h2 { font-size:.8rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:0 0 .6rem; }
+  pre { margin:.4rem 0 0; padding:.7rem; background:#0b1220; border-radius:6px; overflow:auto; font-size:.85rem; }
+  .plan { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:.8rem; }
+  .step header { display:flex; gap:.5rem; align-items:center; font-size:.85rem; }
+  .tag { padding:.1rem .5rem; border-radius:999px; font-size:.75rem; font-weight:600; color:#0b1220; }
+  .tag.rdf { background:var(--rdf);} .tag.lpg { background:var(--lpg);} .tag.strategy { background:#fbbf24; }
+  table { width:100%; border-collapse:collapse; font-size:.9rem; } th,td { text-align:left; padding:.4rem .5rem; border-bottom:1px solid #334155; vertical-align:top; }
+  .src { color:var(--muted); font-size:.75rem; } .err { color:#fca5a5; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Hybrid Graph Mesh <span>one question &rarr; SPARQL + Cypher, stitched virtually</span></h1>
+  <form id="f"><input id="q" placeholder="e.g. friends of Alice who work at Acme" autofocus><button>Ask</button></form>
+  <div class="chips" id="chips"></div>
+  <div id="out"></div>
+</main>
+<script>
+const examples = ["who works at Acme", "friends of Alice", "friends of Alice who work at Acme", "employees of Acme older than 30",
+  "how many companies are there", "companies founded before 2000", "people skilled in SPARQL and work at Acme", "where does Alice work",
+  "names of people sorted by age descending"];
+const chips = document.getElementById('chips');
+for (const e of examples) { const b = document.createElement('button'); b.type='button'; b.textContent=e; b.onclick=()=>{q.value=e; run();}; chips.appendChild(b); }
+const esc = s => String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+function cell(v) {
+  if (v && typeof v === 'object' && 'properties' in v) {
+    const props = Object.entries(v.properties).map(([k,x]) => `<b>${esc(k)}</b>=${esc(JSON.stringify(x))}`).join(' ');
+    return `${v.labels.map(l=>`<span class="tag lpg">${esc(l)}</span>`).join(' ')} ${props}<div class="src">${esc(v.source||'')}</div>`;
+  }
+  return esc(JSON.stringify(v));
+}
+async function run() {
+  const out = document.getElementById('out');
+  out.innerHTML = '<section>Thinking&hellip;</section>';
+  const r = await fetch('/ask', {method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({question: q.value})});
+  const data = await r.json();
+  if (!r.ok) { out.innerHTML = `<section class="err">${esc(data.detail)}</section>`; return; }
+  const plan = data.plan.map(s => `<div class="step"><header><span class="tag ${s.kind}">${s.language.toUpperCase()}</span><span class="tag strategy">${s.strategy}</span>${esc(s.backend)}</header><pre>${esc(s.query)}</pre></div>`).join('');
+  const rows = data.rows.map(r => `<tr>${data.columns.map(c => `<td>${cell(r[c])}</td>`).join('')}</tr>`).join('');
+  out.innerHTML = `
+    <section><h2>Interpretation</h2>${data.translation.explanation.map(esc).join(' &nbsp;&middot;&nbsp; ')}</section>
+    <section><h2>Execution plan</h2><div class="plan">${plan}</div></section>
+    <section><h2>Results (${data.rows.length})</h2><table><thead><tr>${data.columns.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></section>`;
+}
+document.getElementById('f').onsubmit = e => { e.preventDefault(); run(); };
+</script>
+</body>
+</html>

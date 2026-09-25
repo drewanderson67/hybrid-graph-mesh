@@ -1,0 +1,30 @@
+{
+  "backends": [
+    {
+      "name": "orgs-rdf",
+      "type": "rdf",
+      "file": "organizations.ttl",
+      "format": "turtle",
+      "mapping": {
+        "namespaces": {"schema": "http://schema.org/", "ex": "http://example.org/"},
+        "labels": {"Person": "schema:Person", "Organization": "schema:Organization", "City": "schema:City"},
+        "properties": {"name": "schema:name", "jobTitle": "schema:jobTitle", "foundingDate": "schema:foundingDate"},
+        "relationships": {"WORKS_AT": "schema:worksFor", "LOCATED_IN": "schema:location"},
+        "identity_property": "name"
+      }
+    },
+    {"name": "social-lpg", "type": "lpg-json", "file": "social.json"}
+  ],
+  "synonyms": {
+    "Organization": ["company", "companies", "org", "orgs", "employer", "employers"],
+    "Person": ["employee", "employees", "user", "users"],
+    "WORKS_AT": ["work at", "works at", "working at", "work for", "works for", "employed by", "work"],
+    "LOCATED_IN": ["located in", "based in", "in"],
+    "KNOWS": ["know", "knows", "friends of", "friend of", "friends with", "connected to"],
+    "HAS_SKILL": ["skilled in", "proficient in", "can use"],
+    "jobTitle": ["job title", "title", "role"],
+    "foundingDate": ["founded", "founding year"]
+  },
+  "inverse_synonyms": {"WORKS_AT": ["employees of", "staff of", "people at"]},
+  "symmetric": ["KNOWS"]
+}

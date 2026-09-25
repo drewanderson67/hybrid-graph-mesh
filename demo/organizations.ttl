@@ -1,0 +1,29 @@
+@prefix schema: <http://schema.org/> .
+@prefix ex: <http://example.org/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# RDF side of the mesh: people, the organizations they work for, and locations.
+
+ex:acme a schema:Organization ;
+    schema:name "Acme" ;
+    schema:foundingDate "1998"^^xsd:integer ;
+    schema:location ex:seattle .
+
+ex:globex a schema:Organization ;
+    schema:name "Globex" ;
+    schema:foundingDate "2005"^^xsd:integer ;
+    schema:location ex:austin .
+
+ex:initech a schema:Organization ;
+    schema:name "Initech" ;
+    schema:foundingDate "1987"^^xsd:integer ;
+    schema:location ex:austin .
+
+ex:seattle a schema:City ; schema:name "Seattle" .
+ex:austin a schema:City ; schema:name "Austin" .
+
+ex:alice a schema:Person ; schema:name "Alice" ; schema:jobTitle "Engineer" ; schema:worksFor ex:acme .
+ex:bob a schema:Person ; schema:name "Bob" ; schema:jobTitle "Designer" ; schema:worksFor ex:acme .
+ex:carol a schema:Person ; schema:name "Carol" ; schema:jobTitle "Manager" ; schema:worksFor ex:globex .
+ex:dave a schema:Person ; schema:name "Dave" ; schema:jobTitle "Analyst" ; schema:worksFor ex:initech .
+ex:erin a schema:Person ; schema:name "Erin" ; schema:jobTitle "Engineer" ; schema:worksFor ex:acme .
