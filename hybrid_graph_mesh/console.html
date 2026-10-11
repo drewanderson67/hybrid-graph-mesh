@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0f172a">
 <title>Hybrid Graph Mesh</title>
 <style>
   :root { --bg:#0f172a; --panel:#1e293b; --text:#e2e8f0; --muted:#94a3b8; --accent:#38bdf8; --rdf:#a78bfa; --lpg:#34d399; }
@@ -15,13 +17,32 @@
   .chips button { background:var(--panel); color:var(--muted); font-weight:normal; padding:.3rem .7rem; font-size:.85rem; border:1px solid #334155; }
   section { background:var(--panel); border-radius:10px; padding:1rem 1.2rem; margin-bottom:1rem; }
   h2 { font-size:.8rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:0 0 .6rem; }
-  pre { margin:.4rem 0 0; padding:.7rem; background:#0b1220; border-radius:6px; overflow:auto; font-size:.85rem; }
+  pre { margin:.4rem 0 0; padding:.7rem; background:#0b1220; border-radius:6px; overflow-x:auto; max-width:100%; font-size:.85rem; }
+  section, .step, .results { min-width:0; }
   .plan { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); gap:.8rem; }
   .step header { display:flex; gap:.5rem; align-items:center; font-size:.85rem; }
   .tag { padding:.1rem .5rem; border-radius:999px; font-size:.75rem; font-weight:600; color:#0b1220; }
   .tag.rdf { background:var(--rdf);} .tag.lpg { background:var(--lpg);} .tag.strategy { background:#fbbf24; }
   table { width:100%; border-collapse:collapse; font-size:.9rem; } th,td { text-align:left; padding:.4rem .5rem; border-bottom:1px solid #334155; vertical-align:top; }
   .src { color:var(--muted); font-size:.75rem; } .err { color:#fca5a5; }
+  .results { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  .chips { overflow-x:auto; flex-wrap:nowrap; padding-bottom:.3rem; scrollbar-width:thin; }
+  .chips button { white-space:nowrap; flex:0 0 auto; }
+  @media (min-width: 700px) { .chips { flex-wrap:wrap; overflow:visible; } }
+  @media (max-width: 699px) {
+    main { padding:1rem .9rem; }
+    h1 { font-size:1.15rem; } h1 span { display:block; margin:.15rem 0 0; font-size:.8rem; }
+    form { position:sticky; top:0; z-index:2; background:var(--bg); padding:.5rem 0; margin:.5rem 0; }
+    form { flex-direction:column; }
+    input { min-width:0; width:100%; box-sizing:border-box; }
+    input, button { font-size:16px; padding:.75rem .9rem; } /* 16px prevents iOS zoom-on-focus */
+    form button { min-height:44px; width:100%; }
+    .chips button { min-height:36px; }
+    section { padding:.8rem .9rem; border-radius:8px; }
+    .plan { grid-template-columns:1fr; }
+    pre { font-size:.78rem; }
+    table { font-size:.85rem; } th,td { padding:.35rem .4rem; }
+  }
 </style>
 </head>
 <body>
@@ -56,7 +77,7 @@ async function run() {
   out.innerHTML = `
     <section><h2>Interpretation</h2>${data.translation.explanation.map(esc).join(' &nbsp;&middot;&nbsp; ')}</section>
     <section><h2>Execution plan</h2><div class="plan">${plan}</div></section>
-    <section><h2>Results (${data.rows.length})</h2><table><thead><tr>${data.columns.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></section>`;
+    <section><h2>Results (${data.rows.length})</h2><div class="results"><table><thead><tr>${data.columns.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${rows}</tbody></table></div></section>`;
 }
 document.getElementById('f').onsubmit = e => { e.preventDefault(); run(); };
 </script>
